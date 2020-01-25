@@ -1,21 +1,25 @@
 import cv2
+import numpy as np
 
-face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+smile = cv2.CascadeClassifier("haarcascade_smile.xml")
+faces = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
 cap = cv2.VideoCapture(0)
-
 while(cap.isOpened()):
-        ret, frame=cap.read()
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        faces = face_cascade.detectMultiScale(gray,1.1,4)
-        for (x,y,w,h) in faces:
-                if(w>0):
-                        cv2.rectangle(frame,(x,y), (x+w, y+h), (255,0,0), 1)
-                        font = cv2.FONT_HERSHEY_DUPLEX
-                        cv2.putText(frame, "Name", (x+int(w/4),y), font, 1.0, (255, 255, 255), 1)
-        cv2.imshow('output',frame)
-        #To terminate the camera app
-        if(cv2.waitKey(1) & 0xFF == ord('q')):
-                break
-                
+	res,frame = cap.read()
+	if res == True:
+		frame_gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+		face = faces.detectMultiScale(frame_gray,1.3,5)
+		
+		for (x,y,w,h) in face:
+			cv2.rectangle(frame,(x,y),(x+w,y+h),(255,255,255),1)
+			ros_gray = frame_gray[y:y+h, x:x+w]
+			ros_color = frame[y:y+h, x:x+w]
+			smiles = smile.detectMultiScale(ros_gray,1.3,25)
+			for(sx,sy,sw,sh) in smiles:
+				cv2.rectangle(ros_color,(sx,sy),(sx+sw,sy+sh),(255,0,0),1)
+		cv2.imshow("frame",frame)
+			
+		if cv2.waitKey(1) & 0xFF == ord('q'):
+			break
 cap.release()
 cv2.destroyAllWindows()
