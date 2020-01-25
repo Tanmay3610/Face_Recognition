@@ -11,8 +11,9 @@ while(cap.isOpened()):
                 if(w>0):
                         cv2.rectangle(frame,(x,y), (x+w, y+h), (255,0,0), 1)
                         font = cv2.FONT_HERSHEY_DUPLEX
-                        cv2.putText(frame, "Tanmay", (x+int(w/4),y), font, 1.0, (255, 255, 255), 1)
+                        cv2.putText(frame, "Name", (x+int(w/4),y), font, 1.0, (255, 255, 255), 1)
         cv2.imshow('output',frame)
+        #To terminate the camera app
         if(cv2.waitKey(1) & 0xFF == ord('q')):
                 break
                 
